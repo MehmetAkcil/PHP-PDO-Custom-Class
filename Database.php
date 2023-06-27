@@ -42,9 +42,12 @@ class Database
         }
     }
 
-    public function findAll($table)
+    public function findAll($table, $limit = false)
     {
         $sql = "SELECT * FROM {$table}";
+        if($limit !== false){
+            $sql .= " LIMIT {$limit}";
+        }
         return $this->query($sql);
     }
 
