@@ -44,10 +44,7 @@ class Database
 
     public function findAll($table, $limit = false)
     {
-        $sql = "SELECT * FROM {$table}";
-        if($limit !== false){
-            $sql .= " LIMIT {$limit}";
-        }
+        $sql = "SELECT * FROM $table" . ($limit !== false ? " LIMIT $limit" : "");
         return $this->query($sql);
     }
 
