@@ -48,12 +48,14 @@ Belirtilen tabloya yeni bir kayıt ekler.
     $data = array('name' => 'John', 'email' => 'john@example.com'); 
     $database->insert('users', $data);
 
-### `update($table, $id, $data)`
+### `update($table, $columnPrimary, $id, $data)`
 Belirtilen tablodaki bir kaydı günceller.
 
 -   `$table`: Güncellenen kaydın bulunduğu tablo adı.
+-   `$columnPrimary`: Güncellenen kaydın benzersiz kimlik adı.
 -   `$id`: Güncellenen kaydın benzersiz kimliği (ID).
 -   `$data`: Güncellenecek verilerin bir ilişkisel dizi olarak sağlanması.
+
 
 Örnek kullanım:
 
