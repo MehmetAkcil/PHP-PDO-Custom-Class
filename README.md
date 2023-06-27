@@ -28,14 +28,16 @@ Veritabanında bir sorgu çalıştırır.
     $params = array(':id' => 1); 
     $result = $database->query($sql, $params);
 
-### `findAll($table)`
+### `findAll($table, $limit)`
 Belirtilen tablodaki tüm kayıtları getirir.
 
  - `$table`: Verilerin çekileceği tablo adı.
+ - `$limit`: Opsiyoneldir. Istekleri limitlendirmek icin kullanilir.
 
 Örnek kullanım:
 
     $result = $database->findAll('users');
+    $result2 = $database->findAll('users', 10);
 
 ### `insert($table, $data)`
 Belirtilen tabloya yeni bir kayıt ekler.
