@@ -56,7 +56,7 @@ class Database
         return $this->query($sql, $data);
     }
 
-    public function update($table, $id, $data)
+    public function update($table, $columnPrimary, $id, $data)
     {
         $setColumns = '';
         foreach ($data as $column => $value) {
@@ -64,7 +64,7 @@ class Database
         }
         $setColumns = rtrim($setColumns, ', ');
 
-        $sql = "UPDATE {$table} SET {$setColumns} WHERE id = :id";
+        $sql = "UPDATE {$table} SET {$setColumns} WHERE {$columnPrimary} = :id";
         $data['id'] = $id;
         return $this->query($sql, $data);
     }
