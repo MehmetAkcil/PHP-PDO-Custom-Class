@@ -16,7 +16,7 @@ class Database
         $this->password = $password;
     }
 
-    private function connect(): void
+    private function connect(): static|Exception|PDOException
     {
         $dsn = "mysql:host={$this->host};dbname={$this->dbname};charset=utf8mb4";
 
@@ -24,9 +24,9 @@ class Database
             $this->connection = new PDO($dsn, $this->username, $this->password);
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-            return;
+            return $this;
         } catch (PDOException $e) {
-            return;
+            return $e;
         }
     }
 
@@ -36,12 +36,29 @@ class Database
         try {
             $statement = $this->connection->prepare($sql);
             $statement->execute($params);
-            return $statement->fetchAll(PDO::FETCH_ASSOC);
+            $data = $statement->fetchAll(PDO::FETCH_OBJ);
+
+            return count($data) > 1 ? $data : ($data[0] ?? $data);
+
         } catch (PDOException $e) {
-            return $e->getMessage();
+            throw new Exception($e);
         }
     }
 
+    public function queryAll($sql, $params = array()): bool|array
+    {
+        $this->connect();
+        try {
+            $statement = $this->connection->prepare($sql);
+            $statement->execute($params);
+            $data = $statement->fetchAll(PDO::FETCH_OBJ);
+
+            return $data;
+
+        } catch (PDOException $e) {
+            throw new Exception($e);
+        }
+    }
     public function findAll($table, $limit = false)
     {
         $sql = "SELECT * FROM $table" . ($limit !== false ? " LIMIT $limit" : "");
@@ -69,15 +86,12 @@ class Database
         return $this->query($sql, $data);
     }
 
+    /**
+     * @throws Exception
+     */
     public function find($table, $column, $value)
     {
-        $sql = "SELECT * FROM {$table} WHERE {$column} = :value";
-        $params = array(':value' => $value);
-        $result = $this->query($sql, $params);
-        if ($result !== false) {
-            return $result[0] ?? null;
-        }
-        return null;
+        return $this->query("SELECT * FROM {$table} WHERE {$column} = :value", [':value' => $value]);
     }
 
     public function delete($table, $column, $value)
